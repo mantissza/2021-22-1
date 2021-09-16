@@ -1,0 +1,11 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+.badge {
+    @apply text-xs p-0.5 rounded bg-gray-500 font-semibold;
+}
+
+.badge-primary {
+    @apply text-white bg-blue-700;
+}
