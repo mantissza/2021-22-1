@@ -16,5 +16,6 @@ yarn-error.log
 composer.lock
 package-lock.json
 
-/public/css/*
-/public/js/*
+/public/css
+/public/js
+/public/fontawesome

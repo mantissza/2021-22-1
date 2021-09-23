@@ -11,8 +11,15 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'public/css', [
-    require('postcss-import'),
-    require('tailwindcss'),
-    require('autoprefixer'),
-]);
+mix
+    .copy('node_modules/@fortawesome/fontawesome-free/css',         'public/fontawesome/css')
+    .copy('node_modules/@fortawesome/fontawesome-free/webfonts',    'public/fontawesome/webfonts')
+    .copy('node_modules/@fortawesome/fontawesome-free/svgs',        'public/fontawesome/svgs')
+
+    .js('resources/js/app.js', 'public/js')
+    .postCss('resources/css/app.css', 'public/css', [
+        require('postcss-import'),
+        require('tailwindcss'),
+        require('autoprefixer'),
+    ]
+);
