@@ -18,3 +18,4 @@ package-lock.json
 # Buildelt fajlok
 /public/css
 /public/js
+/public/fontawesome

@@ -7,13 +7,13 @@ module.exports = {
         './resources/views/**/*.blade.php',
     ],
 
-    theme: {
+    /*theme: {
         extend: {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
             },
         },
-    },
+    },*/
 
     variants: {
         extend: {

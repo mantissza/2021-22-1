@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,36 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Category
+Route::get('/categories/create', function () {
+    return view('categories.create');
+})->name('categories.create');
+
+Route::post('/categories/store', function (Request $request) {
+    $request->validate([
+        'name' => 'required|min:2',
+        'bg-color' => 'required|regex:/^#([a-fA-F0-9]){8}$/',
+        'text-color' => 'required|regex:/^#([a-fA-F0-9]){8}$/',
+    ], [
+        'required' => 'A(z) :attribute mező megadása kötelező!',
+        'name.required' => 'A név megadása kötelező!',
+    ]);
+})->name('categories.store');
+
+// Post
+Route::get('/posts/create', function () {
+    return view('posts.create');
+})->name('posts.create');
+
+Route::post('/posts/store', function (Request $request) {
+    $request->validate([
+        'title' => 'required|min:2',
+        'text' => 'required|min:5',
+        'categories.*' => 'integer|distinct', // TODO! Adatb esetén exists
+    ]);
+})->name('posts.store');
+
+// ----
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
