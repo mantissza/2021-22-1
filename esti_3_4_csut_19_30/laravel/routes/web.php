@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+use App\Models\Category;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,13 +26,18 @@ Route::get('/categories/create', function () {
 })->name('categories.create');
 
 Route::post('/categories/store', function (Request $request) {
-    $request->validate([
+    $data = $request->validate([
         'name' => 'required|min:2',
         'bg-color' => 'required|regex:/^#([a-fA-F0-9]){8}$/',
         'text-color' => 'required|regex:/^#([a-fA-F0-9]){8}$/',
     ], [
         'required' => 'A(z) :attribute mező megadása kötelező!',
         'name.required' => 'A név megadása kötelező!',
+    ]);
+    Category::create([
+        'name' => $data['name'],
+        'bg_color' => $data['bg-color'],
+        'text_color' => $data['text-color'],
     ]);
 })->name('categories.store');
 

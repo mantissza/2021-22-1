@@ -97,14 +97,14 @@
                 <label for="name" class="block  text-lg font-medium text-gray-700">Beállítások</label>
                 <div class="flex flex-col gap-1.5 mt-2">
                     <div class="flex items-center gap-1.5">
-                        <input type="checkbox" id="disable-comments" name="disable-comments">
+                        <input type="checkbox" id="disable-comments" name="disable-comments" {{ old('disable-comments') ? 'checked' : '' }}>
                         <label for="disable-comments">
                             Hozzászólások kikapcsolása
                         </label>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <input type="checkbox" id="disable-comments" name="disable-comments">
-                        <label for="disable-comments">
+                        <input type="checkbox" id="hide-post" name="hide-post" {{ old('hide-post') ? 'checked' : '' }}>
+                        <label for="hide-post">
                             Bejegyzés elrejtése
                         </label>
                     </div>
