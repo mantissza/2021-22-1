@@ -11,7 +11,7 @@
         </div>
 
         <form
-            x-data="{ categoryName: '', bgColor: '#ff9910ff', textColor: '#ffffffff' }"
+            x-data="{ categoryName: '{{ old('name') }}', bgColor: '{{ old('bg-color', '#ff9910ff') }}', textColor: '{{ old('text-color', '#ffffffff') }}' }"
             x-init="() => {
                 new Picker({
                     color: bgColor,

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,11 @@ Route::post('/categories/store', function (Request $request) {
     ], [
         'name.required' => 'A név megadása kötelező',
     ]);
+    Category::create([
+        'name' => $validated['name'],
+        'bg_color' => $validated['bg-color'],
+        'text_color' => $validated['text-color']
+    ]);
 })->name('categories.store');
 
 Route::get('/posts/create', function () {
@@ -45,6 +51,7 @@ Route::post('/posts/store', function (Request $request) {
         'hide_post' => 'nullable|boolean',
     ], [
         'title.required' => 'A cím megadása kötelező',
+        'text.min' => 'A bejegyzés szövege legalább :min karakter legyen'
     ]);
 })->name('posts.store');
 
