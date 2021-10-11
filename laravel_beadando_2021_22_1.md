@@ -166,16 +166,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
 
 ## Követelmények
 
-- Alapelvárás, hogy az alkalmazás a beadott zip-ből kicsomagolva ezekkel a parancsokkal probléma nélkül elinduljon:
-  ```
-  composer install
-  npm install
-  npm run prod
-  php artisan migrate:fresh
-  php artisan db:seed
-  php artisan storage:link
-  php artisan serve
-  ```
+- **Alapelvárás, hogy az alkalmazás a beadott zip-ből kicsomagolva az operációs rendszernek megfelelő `init.bat` / `init.sh` fájlokat futtatva elinduljon!** Ezek a fájlok tartalmazzák a projekt inicializálásához szükséges parancsokat.
 - Kötelező mellékelni a munka tisztaságáról szóló _STATEMENT.md_ nevű nyilatkozatot, a részleteket [lásd lentebb](#dolgozz-fair-módon). Az elfelejtett nyilatkozat utólag pótolható Canvas-on kommentben is.
 - Tilos mellékelni a vendor és a node_modules mappákat!
 - Elvárás az igényesen kidolgozott felhasználói felület, azaz, hogy felhasználóként, a kódban való kutatgatás nélkül is teljes mértékben használható legyen az alkalmazás; ki legyen dolgozva a menürendszer, a műveletekhez rendelkezésre álljanak a gombok, megjelenjenek a hiba/tájékoztató üzenetek, stb. A stílushoz használt CSS framework nincs megkötve, használhatsz Tailwind-ot, Bootstrap-et, vagy ami szimpatikus.
