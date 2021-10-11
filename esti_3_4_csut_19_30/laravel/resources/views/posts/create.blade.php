@@ -51,7 +51,8 @@
             ];
         @endphp
 
-        <form action="{{ route('posts.store') }}" method="POST">
+        {{-- Az enctype-ot be kell állítani multipart form data-ra, hogy a form képes legyen fájlokat is elküldeni --}}
+        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-5">
                 <label for="title" class="block text-lg font-medium text-gray-700">Bejegyzés címe</label>
@@ -112,8 +113,19 @@
             </div>
 
             <div class="mb-5">
+                <label for="name" class="block  text-lg font-medium text-gray-700">Kép</label>
+                <input type="file" class="form-control-file" id="thumbnail" name="thumbnail">
+                @error('thumbnail')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-5">
                 <label for="name" class="block  text-lg font-medium text-gray-700">Csatolmány</label>
                 <input type="file" class="form-control-file" id="attachment" name="attachment">
+                @error('attachment')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <button type="submit" class="mt-6 bg-blue-500 hover:bg-blue-600 text-gray-100 font-semibold px-2 py-1 text-xl">Létrehozás</button>

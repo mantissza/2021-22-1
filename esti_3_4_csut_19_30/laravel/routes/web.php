@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\PostController;
+
 use App\Models\Category;
 
 /*
@@ -17,8 +19,13 @@ use App\Models\Category;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    //return view('welcome');
+    return redirect()->route('posts.index');
 });
+
+// Resource route létrehozása a posts név köré (/posts /posts/id, stb lesz)
+// A route-ok megtekinthetők a php artisan route:list paranccsal
+Route::resource('posts', PostController::class);
 
 // Category
 Route::get('/categories/create', function () {
@@ -42,7 +49,7 @@ Route::post('/categories/store', function (Request $request) {
 })->name('categories.store');
 
 // Post
-Route::get('/posts/create', function () {
+/*Route::get('/posts/create', function () {
     return view('posts.create');
 })->name('posts.create');
 
@@ -53,6 +60,7 @@ Route::post('/posts/store', function (Request $request) {
         'categories.*' => 'integer|distinct', // TODO! Adatb esetén exists
     ]);
 })->name('posts.store');
+*/
 
 // ----
 Route::get('/dashboard', function () {
