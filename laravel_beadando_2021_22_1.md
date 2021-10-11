@@ -176,7 +176,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
   php artisan storage:link
   php artisan serve
   ```
-- Kötelező mellékelni a munka tisztaságáról szóló _STATEMENT.txt_ nevű nyilatkozatot, a részleteket [lásd lentebb](#dolgozz-fair-módon). Az elfelejtett nyilatkozat utólag pótolható Canvas-on kommentben is.
+- Kötelező mellékelni a munka tisztaságáról szóló _STATEMENT.md_ nevű nyilatkozatot, a részleteket [lásd lentebb](#dolgozz-fair-módon). Az elfelejtett nyilatkozat utólag pótolható Canvas-on kommentben is.
 - Tilos mellékelni a vendor és a node_modules mappákat!
 - Elvárás az igényesen kidolgozott felhasználói felület, azaz, hogy felhasználóként, a kódban való kutatgatás nélkül is teljes mértékben használható legyen az alkalmazás; ki legyen dolgozva a menürendszer, a műveletekhez rendelkezésre álljanak a gombok, megjelenjenek a hiba/tájékoztató üzenetek, stb. A stílushoz használt CSS framework nincs megkötve, használhatsz Tailwind-ot, Bootstrap-et, vagy ami szimpatikus.
 - Az időzóna legyen magyarra állítva az alkalmazás konfigurációjában!
@@ -214,7 +214,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
 - A "problémás" beadandók eredményes kiszűrése érdekében a beadott munkák szigorú, több lépcsőből álló plágiumellenőrzési folyamaton mennek keresztül, amely több automatizált gépi ciklusból és humán ellenőrzésből is áll. A csalásokat (konkrét példák: jelentős netről másolás, egyező beadandók, mások helyett leadott beadandók, stb) észre fogjuk venni.
 - Nyilvánvaló esetekben ez kérdés nélkül azonnali következményekkel jár, gyanús esetekben pedig az érintett hallgatók felkérhetők szóbeli védésre, ahol teljesen véletlenszerűen belekérdezünk az alkalmazásba, annak logikájába és működésébe. Ezzel tökéletesen fel tudjuk mérni, hogy az illető tisztában van-e azzal, hogy mit adott le.
 - Ha valaki becsületesen készíti el a beadandót, órai példákat használt, "rákeresett erre-arra a neten", megnézett pár stackoverflow, laracasts thread-et, akkor az itt leírtak miatt egyáltalán nem kell aggódnia.
-- A beadott feladatnak tartalmaznia kell egy STATEMENT.txt nevű fájlt, a következő tartalommal (értelemszerűen az adataidat írd bele):
+- A beadott feladatnak tartalmaznia kell egy STATEMENT.md nevű fájlt, a következő tartalommal (értelemszerűen az adataidat írd bele):
 
   ```
   # Nyilatkozat
