@@ -125,6 +125,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
   - Rendező kötelező, max 128 karakter
   - Év kötelező, legalább 1870, legfeljebb a jelenlegi év
   - Leírás nem kötelező, de ha van, max 512 karakter
+  - Film hossza
   - A feltöltött kép formátuma csak jpg és png lehet, maximum 2MB méretben.
 - A filmhez tartozó képfeltöltést rendesen implementálni kell (vagyis egy link megadása, majd annak átadása egy img tag-nek nem számít megoldásnak)! Fel kell tudni tölteni a képfájlt, azt eltárolni a storage-ben, majd onnan kiolvasni megjelenítéshez a movie image mezője alapján.
 - A form legyen állapottartó, a validációs hibákról adjon egyértelmű visszajelzést a felhasználónak.
