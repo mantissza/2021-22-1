@@ -2,17 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\Category;
+use App\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
-class CategoryFactory extends Factory
+class PostFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Category::class;
+    protected $model = Post::class;
 
     /**
      * Define the model's default state.
@@ -22,9 +23,8 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word(),
-            'bg_color' => $this->faker->hexColor() . "ff",
-            'text_color' => $this->faker->hexColor() . "ff",
+            'title' =>  Str::ucfirst($this->faker->words($this->faker->numberBetween(2,6), true)),
+            'text' => $this->faker->paragraphs($this->faker->numberBetween(2,5), true),
         ];
     }
 }

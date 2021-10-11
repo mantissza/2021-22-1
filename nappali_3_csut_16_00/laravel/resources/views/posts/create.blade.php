@@ -10,7 +10,7 @@
             <a href="/" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-long-arrow-alt-left"></i> Vissza a bejegyzésekhez</a>
         </div>
 
-        <form action="{{ route('posts.store') }}" method="POST">
+        <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-5">
                 <label for="title" class="block text-lg font-medium text-gray-700">Bejegyzés címe</label>
@@ -83,9 +83,24 @@
                 </div>
             </div>
 
+            @error('disable_comments')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+
+            <div class="mb-5">
+                <label for="name" class="block  text-lg font-medium text-gray-700">Kép</label>
+                <input type="file" class="form-control-file" id="thumbnail" name="thumbnail">
+                @error('thumbnail')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
             <div class="mb-5">
                 <label for="name" class="block  text-lg font-medium text-gray-700">Csatolmány</label>
                 <input type="file" class="form-control-file" id="attachment" name="attachment">
+                @error('attachment')
+                    <p class="text-red-500">{{ $message }}</p>
+                @enderror
             </div>
 
             <button type="submit" class="mt-6 bg-blue-500 hover:bg-blue-600 text-gray-100 font-semibold px-2 py-1 text-xl">Létrehozás</button>
