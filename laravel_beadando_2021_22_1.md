@@ -166,6 +166,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
 
 ## Követelmények
 
+- A beadandót a Canvas rendszerben kell beadni a kiírt feladathoz. Mindkét felvonást külön-külön is be kell adni.
 - **Alapelvárás, hogy az alkalmazás a beadott zip-ből kicsomagolva az operációs rendszernek megfelelő `init.bat` / `init.sh` fájlokat futtatva elinduljon!** Ezek a fájlok tartalmazzák a projekt inicializálásához szükséges parancsokat.
 - Kötelező mellékelni a munka tisztaságáról szóló _STATEMENT.md_ nevű nyilatkozatot, a részleteket [lásd lentebb](#dolgozz-fair-módon). Az elfelejtett nyilatkozat utólag pótolható Canvas-on kommentben is.
 - Tilos mellékelni a vendor és a node_modules mappákat!
