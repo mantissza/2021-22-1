@@ -56,7 +56,7 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
   - user_id (integer, foreign)
   - movie_id (integer, foreign)
   - rating (integer, 1-5)
-  - comment (string, max 255)
+  - comment (string, max 255, nullable)
   - timestamps (created_at, updated_at)
 
 ### Relációk
