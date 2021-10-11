@@ -10,6 +10,7 @@
             <a href="/" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-long-arrow-alt-left"></i> Vissza a bejegyzésekhez</a>
         </div>
 
+        {{-- Az enctype-ot be kell állítani multipart form data-ra, hogy a form képes legyen fájlokat is elküldeni --}}
         <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-5">

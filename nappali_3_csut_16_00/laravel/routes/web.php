@@ -22,6 +22,8 @@ Route::get('/', function () {
     return redirect()->route('posts.index');
 });
 
+// Resource route létrehozása a posts név köré (/posts /posts/id, stb lesz)
+// A route-ok megtekinthetők a php artisan route:list paranccsal
 Route::resource('posts', PostController::class);
 
 Route::get('/categories/create', function () {

@@ -17,6 +17,11 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string('title', 255);
             $table->text('text');
+            // A title és a text mindenképp kell, de a többinél megadunk default értéket, vagy nullable
+            // opciót, vagyis, ha nem adunk meg értéket a create során, akkor NULL értéket vegyen fel a
+            // mező.
+            // Éppen ezért elég a factory-hoz is csak a title-el és a text-el foglalkozni, hiszen a többél
+            // van default meghatározott viselkedésünk
             $table->boolean('disable_comments')->default(false);
             $table->boolean('hide_post')->default(false);
             $table->string('attachment_hash_name')->nullable();

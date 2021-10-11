@@ -21,27 +21,52 @@
                 <div class="grid grid-cols-3 gap-3">
                     @forelse ($posts as $post)
                         <div class="col-span-3 lg:col-span-1 border border-gray-400 flex flex-col">
-                            <div class="flex-1 flex flex-col justify-between">
-                                <div>
-                                    <div class="min-h-48 h-48 max-h-48">
-                                        <img src="{{ $post->thumbnail_hash_name ? asset('storage/thumbnails/' . $post->thumbnail_hash_name) : 'https://www.ispreview.co.uk/wp-content/uploads/london_city_2017_uk.jpg' }}" class="object-cover">
-                                    </div>
-                                    <div class="px-2.5 py-2">
-                                        <h3 class="text-xl mb-0.5 font-semibold">
-                                            {{ $post['title'] }}
-                                        </h3>
-                                        <h4 class="text-gray-400">
-                                            <span class="mr-2"><i class="fas fa-user"></i> {{ $post['author'] }}</span>
-                                            <span><i class="far fa-calendar-alt"></i> {{ $post->created_at->format('Y. m. d.') }}</span>
-                                        </h4>
-                                        <p class="text-gray-600 mt-1">
-                                            {{ Str::of($post->text)->limit(40) }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <a href="{{ route('posts.show', $post)}}" class="bg-blue-500 hover:bg-blue-600 px-1.5 py-1 text-white mt-3 font-semibold text-center">Elolvasom <i class="fas fa-angle-right"></i></a>
-                            </div>
+                            <img
+                                src="{{
+                                    /*
+                                        A képek a storage/app/public mappában vannak tárolva. Ahhoz, hogy le lehessen kérni
+                                        őket a böngészőből, valahogy el kéne őket érni a public mappából (a projekt fő mappájában
+                                        lévő public mappából, ne keverd a storage/app/public-al). Ehhez létre kell hozni egy szim-
+                                        bolikus linket a storage-hoz, amit ezzel a paranccsal lehet megtenni:
 
+                                        php artisan storage:link
+
+                                        Ilyenkor megjelenik a symlink storage néven a public mappában, a Windows parancsikonnak mutatja.
+
+                                        Ha nincs kép rendelve a bejegyzéshez (a thumbnail_hash_name null), akkor egy default, úgynevezett
+                                        placeholder képet jelenítünk meg.
+
+                                        Az asset() a public mappára értendő, és egy url-t generál a .env-ben lévő APP_URL alapján
+                                    */
+                                    asset(
+                                        $post->thumbnail_hash_name
+                                            ? 'storage/thumbnails/' . $post->thumbnail_hash_name
+                                            : 'images/placeholder.jpg'
+                                    )
+                                }}"
+                                class="min-h-48 h-48 max-h-48 object-cover"
+                            >
+                            <div class="px-2.5 py-2 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h3 class="text-xl mb-0.5 font-semibold">
+                                        {{ $post->title }}
+                                    </h3>
+                                    <h4 class="text-gray-400">
+                                        <span class="mr-2"><i class="fas fa-user"></i>
+                                            {{
+                                                $post->author_id
+                                                    ? $post->author->name
+                                                    : 'Nincs szerző'
+                                            }}
+                                        </span>
+                                        <span><i class="far fa-calendar-alt"></i> {{ $post->created_at->format('Y. m. d.') }}</span>
+                                    </h4>
+                                    <p class="text-gray-600 mt-1">
+                                        {{ Str::of($post->text)->limit(40) }}
+                                    </p>
+                                </div>
+                                <a href="{{ route('posts.show', ['post' => $post]) }}" class="bg-blue-500 hover:bg-blue-600 px-1.5 py-1 text-white mt-3 font-semibold text-center">Elolvasom <i class="fas fa-angle-right"></i></a>
+                            </div>
                         </div>
                     @empty
                         <div class="col-span-3 px-2 py-4 bg-blue-100">
