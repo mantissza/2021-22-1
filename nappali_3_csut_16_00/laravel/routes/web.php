@@ -22,6 +22,11 @@ Route::get('/', function () {
     return redirect()->route('posts.index');
 });
 
+Route::get(
+    '/posts/{id}/attachment',
+    [PostController::class, 'attachment']
+)->name('posts.attachment');
+
 // Resource route létrehozása a posts név köré (/posts /posts/id, stb lesz)
 // A route-ok megtekinthetők a php artisan route:list paranccsal
 Route::resource('posts', PostController::class);

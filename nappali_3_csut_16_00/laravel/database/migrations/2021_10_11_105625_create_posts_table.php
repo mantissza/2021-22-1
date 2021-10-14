@@ -27,7 +27,10 @@ class CreatePostsTable extends Migration
             $table->string('attachment_hash_name')->nullable();
             $table->string('attachment_file_name')->nullable();
             $table->string('thumbnail_hash_name')->nullable();
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
