@@ -6,15 +6,29 @@
                     {{ $post->title }}
                 </h1>
                 <h2 class="text-gray-400">
-                    <span class="mr-2"><i class="fas fa-user"></i> Szerző</span>
-                    <span><i class="far fa-calendar-alt"></i> Date</span>
+                    <span class="mr-2"><i class="fas fa-user"></i>
+                        {{
+                            $post->author_id
+                                ? $post->author->name
+                                : 'Nincs szerző'
+                        }}
+                    </span>
+                    <span><i class="far fa-calendar-alt"></i> {{ $post->created_at->format('Y. m. d.') }}</span>
                 </h2>
-                <div class="flex flex-row flex-wrap gap-1 my-2.5">
-                    <span class="py-0.5 px-1.5 font-semibold bg-blue-800 text-white">kategória1</span>
-                    <span class="py-0.5 px-1.5 font-semibold bg-red-800 text-white">kat2</span>
-                    <span class="py-0.5 px-1.5 font-semibold bg-yellow-800 text-white">kategória3</span>
-                    <span class="py-0.5 px-1.5 font-semibold bg-green-800 text-white">kategória4</span>
-                </div>
+
+                @if ($post->categories->isNotEmpty())
+                    <div class="flex flex-row flex-wrap gap-1 my-2.5">
+                        @foreach ($post->categories as $category)
+                            <span
+                                class="py-0.5 px-1.5 font-semibol"
+                                style="background-color: {{ $category->bg_color }}; color: {{ $category->text_color }};"
+                            >
+                                {{ $category->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                @endif
+
                 <a href="/" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-long-arrow-alt-left"></i> Vissza a bejegyzésekhez</a>
             </div>
             <div class="flex items-center gap-2 lg:justify-end">
@@ -30,14 +44,15 @@
         @endif
 
         <div class="my-3">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pharetra pharetra massa massa ultricies mi quis hendrerit dolor. Tristique sollicitudin nibh sit amet. Vivamus at augue eget arcu dictum varius duis at consectetur. Et odio pellentesque diam volutpat commodo. Et netus et malesuada fames ac. Elementum eu facilisis sed odio. Varius quam quisque id diam vel quam elementum. A diam sollicitudin tempor id eu. Lobortis scelerisque fermentum dui faucibus in ornare quam viverra. Turpis massa tincidunt dui ut ornare lectus sit amet. Varius vel pharetra vel turpis nunc eget. Diam maecenas ultricies mi eget mauris pharetra et ultrices neque. Augue eget arcu dictum varius duis at consectetur. Volutpat diam ut venenatis tellus in metus vulputate eu scelerisque. Ornare arcu odio ut sem nulla pharetra. Nulla aliquet porttitor lacus luctus accumsan tortor posuere. At quis risus sed vulputate odio ut enim. Nisl vel pretium lectus quam id. Ut porttitor leo a diam sollicitudin tempor. Aliquam purus sit amet luctus venenatis lectus. Amet nulla facilisi morbi tempus. Egestas dui id ornare arcu odio ut. Lobortis scelerisque fermentum dui faucibus in. Erat velit scelerisque in dictum non consectetur a erat nam. Aliquet bibendum enim facilisis gravida neque convallis. Ultricies lacus sed turpis tincidunt id aliquet risus feugiat. Lectus magna fringilla urna porttitor rhoncus dolor purus non. Aliquet nec ullamcorper sit amet risus nullam eget felis.
-            </p>
+            {!! nl2br(e($post->text)) !!}
         </div>
 
-        <div class="my-3">
-            <h3 class="font-semibold text-xl">Csatolmány</h3>
-            <a href="#" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-download"></i> csatolmany.pdf</a>
-        </div>
+        @if ($post->attachment_hash_name && $post->attachment_file_name)
+            <div class="my-3">
+                <h3 class="font-semibold text-xl">Csatolmány</h3>
+                <a href="{{ route('posts.attachment', ['id' => $post->id]) }}" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-download"></i> {{ $post->attachment_file_name }}</a>
+            </div>
+        @endif
 
         <div>
             <h3 class="font-semibold text-xl">Hozzászólások</h3>

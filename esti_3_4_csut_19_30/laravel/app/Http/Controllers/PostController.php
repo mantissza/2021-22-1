@@ -174,4 +174,12 @@ class PostController extends Controller
     {
         //
     }
+
+    public function attachment($id) {
+        $post = Post::find($id);
+        if ($post === null || $post->attachment_hash_name === null || $post->attachment_file_name === null) {
+            return abort(404);
+        }
+        return Storage::disk('public')->download('attachments/' . $post->attachment_hash_name, $post->attachment_file_name);
+    }
 }
