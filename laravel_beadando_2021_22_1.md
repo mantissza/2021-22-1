@@ -66,7 +66,7 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
 
 ## 1. felvonás (30 pont)
 
-**Határidő: 2021. október 24(?). (vasárnap) 23:59**
+**Határidő: 2021. október 31. (vasárnap) 23:59**
 
 ### Seeder (3 pont)
 
@@ -110,7 +110,7 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
 
 ## 2. felvonás (30 pont)
 
-**Határidő: 2021. november 2(?). (kedd) 23:59**
+**Határidő: 2021. november 7. (vasárnap) 23:59**
 
 A második felvonásban az admin funkciókat kell megcsinálni.
 
