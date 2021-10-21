@@ -18,6 +18,25 @@
         <script src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body>
+        @auth
+            {{-- Auth::user() --}}
+
+            <form method="POST" action="{{ route('logout') }}" id="navbar-logout-form">
+                @csrf
+
+                <a
+                    href="{{ route('logout') }}"
+                    class="hover:underline"
+                    onclick="event.preventDefault(); document.querySelector('#navbar-logout-form').submit();"
+                >
+                    Kilépés
+                </a>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="hover:underline">Belépés</a>
+            <a href="{{ route('register') }}" class="hover:underline">Regisztráció</a>
+        @endauth
+
         <div class="font-sans text-gray-900 antialiased">
             {{ $slot }}
         </div>

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Post;
 use Storage;
+use Auth;
 
 /*
     A resource controller így épül fel, a postokkal (bejegyzésekkel) elmagyarázva:
@@ -31,7 +32,8 @@ class PostController extends Controller
         $users_count = User::count();
         $categories_count = Category::count();
         $posts_count = Post::count();
-        $posts = Post::all();
+        //$posts = Post::all();
+        $posts = Post::paginate(9);
         return view('posts.index', compact('users_count','categories_count','posts_count','posts'));
         /*
             A compact-ot valahogy így kell elképzelni:
@@ -59,7 +61,12 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        if (!Auth::user()) {
+            return redirect()->route('login');
+        }
+
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
     }
 
     /**
@@ -70,6 +77,10 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        if (!Auth::user()) {
+            return abort(403);
+        }
+
         $data = $request->validate([
             'title' => 'required|min:2|max:255',
             'text' => 'required|min:5',
@@ -116,8 +127,13 @@ class PostController extends Controller
         }
         // Debug
         //error_log(json_encode($data));
+        // Hozzá kell rendelni az aktuálisan autentikált usert a posthoz, mint szerző
+        //$data['author_id'] = Auth::user()->id;
+        $data['author_id'] = Auth::id();
         // A postot létrehozzuk a data-val (ez egy tömb, amiben megvannak a kulcsok)
         $post = Post::create($data);
+        // Kategóriák hozzárendelése a bejegyzéshez
+        if (isset($data['categories'])) $post->categories()->attach($data['categories']);
         // Be flash-eljük a session-be a post_created logikai értéket, ez arra kell, hogy
         // eszerint feltételesen meg tudjunk jeleníteni egy alert-et, hogy a post létrehozása
         // sikerült
@@ -170,9 +186,21 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Post $post)
     {
-        //
+        /*if ($post->author_id !== null && Auth::id() !== $post->author_id * 1) {
+            return abort(403);
+        }*/
+
+        $this->authorize('delete', $post);
+
+        $deleted = $post->delete();
+        if (!$deleted) {
+            return abort(500);
+        }
+
+        $request->session()->flash('post_deleted', $post);
+        return redirect()->route('posts.index');
     }
 
     public function attachment($id) {

@@ -10,6 +10,7 @@
             <a href="/" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-long-arrow-alt-left"></i> Vissza a bejegyzésekhez</a>
         </div>
 
+        {{--!
         @php
             $categories = [
                 (object)[
@@ -50,6 +51,7 @@
                 ],
             ];
         @endphp
+        --}}
 
         {{-- Az enctype-ot be kell állítani multipart form data-ra, hogy a form képes legyen fájlokat is elküldeni --}}
         <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
@@ -84,7 +86,7 @@
                                     checked
                                 @endif
                             >
-                            <label for="category{{ $loop->iteration }}" class="py-0.5 px-1.5 font-semibold" style="background-color: {{ $category->bgColor }}; color: {{ $category->textColor }};">
+                            <label for="category{{ $loop->iteration }}" class="py-0.5 px-1.5 font-semibold" style="background-color: {{ $category->bg_color }}; color: {{ $category->text_color }};">
                                 {{ $category->name }}
                             </label>
                         </div>

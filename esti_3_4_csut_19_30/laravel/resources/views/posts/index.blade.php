@@ -9,8 +9,10 @@
                 <h1 class="font-bold my-4 text-4xl">Szerveroldali Blog</h1>
             </div>
             <div class="flex items-center gap-2 lg:justify-end">
-                <a href="{{ route('categories.create') }}" class="bg-green-500 hover:bg-green-700 px-2 py-1 text-white"><i class="fas fa-plus-circle"></i> Új kategória</a>
-                <a href="{{ route('posts.create') }}" class="bg-green-500 hover:bg-green-700 px-2 py-1 text-white"><i class="fas fa-plus-circle"></i> Új bejegyzés</a>
+                @auth
+                    <a href="{{ route('categories.create') }}" class="bg-green-500 hover:bg-green-700 px-2 py-1 text-white"><i class="fas fa-plus-circle"></i> Új kategória</a>
+                    <a href="{{ route('posts.create') }}" class="bg-green-500 hover:bg-green-700 px-2 py-1 text-white"><i class="fas fa-plus-circle"></i> Új bejegyzés</a>
+                @endauth
             </div>
         </div>
 
@@ -18,6 +20,13 @@
             <!-- Cardok -->
             <div class="col-span-4 lg:col-span-3">
                 <h2 class="font-semibold text-3xl my-2">Minden bejegyzés</h2>
+
+                @if (Session::has('post_deleted'))
+                    <div class="px-3 py-5 mb-5 bg-green-500 text-white font-semibold">
+                        A(z) {{ Session::get('post_deleted')->title }} című bejegyzés sikeresen ki lett törölve!
+                    </div>
+                @endif
+
                 <div class="grid grid-cols-3 gap-3">
                     @forelse ($posts as $post)
                         <div class="col-span-3 lg:col-span-1 border border-gray-400 flex flex-col">
@@ -73,6 +82,10 @@
                             Jelenleg még nincsenek bejegyzések!
                         </div>
                     @endforelse
+
+                    <div class="col-span-3 border-t mt-5 p-3">
+                        {{ $posts->links() }}
+                    </div>
                 </div>
             </div>
 
