@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Post;
 use Storage;
+use Auth;
 
 /*
     A resource controller így épül fel, a postokkal (bejegyzésekkel) elmagyarázva:
@@ -21,6 +22,10 @@ use Storage;
 
 class PostController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth')->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -31,7 +36,8 @@ class PostController extends Controller
         $users_count = User::count();
         $categories_count = Category::count();
         $posts_count = Post::count();
-        $posts = Post::all();
+        //$posts = Post::all();
+        $posts = Post::paginate(6);
         return view('posts.index', compact('users_count','categories_count','posts_count','posts'));
         /*
             A compact-ot valahogy így kell elképzelni:
@@ -59,6 +65,10 @@ class PostController extends Controller
      */
     public function create()
     {
+        /*if (!Auth::user()) {
+            return redirect()->route('login');
+        }*/
+
         return view('posts.create');
     }
 
@@ -70,6 +80,10 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        /*if (!Auth::user()) {
+            return abort(403);
+        }*/
+
         $data = $request->validate([
             'title' => 'required|min:2|max:255',
             'text' => 'required|min:5',
@@ -117,6 +131,8 @@ class PostController extends Controller
         // Debug
         //error_log(json_encode($data));
         // A postot létrehozzuk a data-val (ez egy tömb, amiben megvannak a kulcsok)
+        //$data['author_id'] = Auth::user()->id;
+        $data['author_id'] = Auth::id();
         $post = Post::create($data);
         // Be flash-eljük a session-be a post_created logikai értéket, ez arra kell, hogy
         // eszerint feltételesen meg tudjunk jeleníteni egy alert-et, hogy a post létrehozása
@@ -172,9 +188,25 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Post $post)
     {
-        //
+        // Jogosultságkezelés, csak a szerző törölheti a saját bejegyzését
+        /*if (!$post->author_id || Auth::id() !== $post->author_id * 1) {
+            return abort(403);
+        }*/
+        $this->authorize('delete', $post);
+
+        // Kitöröljük a bejegyzést de előtte eltároljuk az id-t
+        $id = $post->id;
+        if (!$post->delete()) {
+            return abort(500);
+        }
+
+        // Átirányítunk a főoldalra úgy, hogy átadjuk a korábban kitörölt bejegyzés id-ját is,
+        // ami alapján majd meg tudunk jeleníteni valamilyen üzenetet
+        $request->session()->flash('post_deleted', $id);
+        // ...
+        return redirect()->route('posts.index');
     }
 
     public function attachment($id) {

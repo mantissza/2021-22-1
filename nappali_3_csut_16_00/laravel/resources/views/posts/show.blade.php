@@ -27,8 +27,23 @@
                 <a href="/" class="text-blue-400 hover:text-blue-600 hover:underline"><i class="fas fa-long-arrow-alt-left"></i> Vissza a bejegyzésekhez</a>
             </div>
             <div class="flex items-center gap-2 lg:justify-end">
-                <button class="bg-blue-500 hover:bg-blue-700 px-2 py-1 text-white"><i class="far fa-edit"></i> Módosítás</button>
-                <button class="bg-red-500 hover:bg-red-700 px-2 py-1 text-white"><i class="far fa-trash-alt"></i> Törlés</button>
+                {{--! @if ($post->author_id && Auth::id() === $post->author_id * 1) --}}
+                @can('delete', $post)
+                    <button class="bg-blue-500 hover:bg-blue-700 px-2 py-1 text-white"><i class="far fa-edit"></i> Módosítás</button>
+                    <button class="bg-red-500 hover:bg-red-700 px-2 py-1 text-white">
+                        <form method="POST" action="{{ route('posts.destroy', $post) }}" id="post-destroy-form">
+                            @method('DELETE')
+                            @csrf
+                            <a
+                                href="#"
+                                onclick="event.preventDefault(); document.querySelector('#post-destroy-form').submit();"
+                            >
+                                <i class="far fa-trash-alt"></i> Törlés
+                            </a>
+                        </form>
+                    </button>
+                @endcan
+                {{--! @endif --}}
             </div>
         </div>
 
