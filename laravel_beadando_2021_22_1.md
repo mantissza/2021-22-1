@@ -53,6 +53,7 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
   - remember_token
   - timestamps (created_at, updated_at)
 - Rating
+  - id
   - user_id (integer, foreign)
   - movie_id (integer, foreign)
   - rating (integer, 1-5)
