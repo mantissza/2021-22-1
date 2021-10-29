@@ -72,6 +72,8 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
 ### Seeder (3 pont)
 
 - Az alkalmazás legyen feltölthető adatokkal egy seeder / seeder-ek segítségével. Ez a feltöltés lehetőleg minél több mindent fedjen le.
+  - Itt alapvetően a "mindent fedjen le" alatt arra gondolunk, hogy minden *esetet* fedjen le, tehát mindenféle model, ami az alkalmazásban van (user, movie, rating) kerüljön seedelésre, és a köztük lévő kapcsolatok is legyenek szépen, logikusan felépítve.
+  - Nem szükséges sok adatot seedelni, bőven elég 2-3 user, vagy annyi film, értékelés, hogy menjen a pagination.
 - A seeder ezzel az egy paranccsal működjön: `php artisan db:seed`
 - A user fiókok az egyszerűség kedvéért **csak ezek lehetnek** (email - jelszó):
   - Admin: *admin@szerveroldali.hu - password*
