@@ -37,7 +37,7 @@ A feladatod egy filmkatalógus elkészítése, ahol az admin kezeli a filmeket, 
   - id
   - title (string)
   - director (string)
-  - description (text)
+  - description (text, nullable)
   - year (integer)
   - length (integer, másodpercekben mérjük)
   - image (string, nullable)
