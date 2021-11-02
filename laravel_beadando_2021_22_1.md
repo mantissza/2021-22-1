@@ -176,6 +176,7 @@ A második felvonásban az admin funkciókat kell megcsinálni.
 - Elvárás az igényesen kidolgozott felhasználói felület, azaz, hogy felhasználóként, a kódban való kutatgatás nélkül is teljes mértékben használható legyen az alkalmazás; ki legyen dolgozva a menürendszer, a műveletekhez rendelkezésre álljanak a gombok, megjelenjenek a hiba/tájékoztató üzenetek, stb. A stílushoz használt CSS framework nincs megkötve, használhatsz Tailwind-ot, Bootstrap-et, vagy ami szimpatikus.
 - Az időzóna legyen magyarra állítva az alkalmazás konfigurációjában!
 - Az űrlapokon keresztül küldött adatokat minden esetben validálni kell szerveroldalon! HTML szintű validáció (pl. required attribútum) ne is legyen a kódban! Nem a HTML tag-ek ismeretét szeretnénk számonkérni egy szerveroldali tárgyon, hanem a [Laravel validációjának](https://laravel.com/docs/8.x/validation) megfelelő alkalmazását!
+- Bejelentkezés után ne a `/dashboard` oldalra kerüljünk, hanem az alkalmazás tényleges főoldalára! Ez a `RouteServiceProvider.php`-ben lévő HOME konstans átírásával valósítható meg.
 
 ## Alkotói szabadság
 
