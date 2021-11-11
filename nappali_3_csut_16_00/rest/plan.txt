@@ -1,0 +1,39 @@
+REST API
+-----zh, valamikor nov végén
+GraphQL
+Websocket (Socket.io)
+-----zh, valamikor vizsgaidőszak elején
+
+Sequelize
+
+CLI
+
+-----
+
+Feladat:
+
+Hasonló feladatot, mint ami a beadandó volt, annyi, hogy a filmeket egészítsük ki műfajokkal is
+
+A relációk így fognak alakulni:
+
+Genre N - N Movie
+Movie 1 - N Rating
+User 1 - N Rating
+
+Genre modell:
+- name
+- description
+
+1. Modellek generálása és a relációk megteremtése
+
+npx sequelize-cli model:generate --name Genre --attributes name:string,description:string
+
+npx sequelize-cli model:generate --name Movie --attributes title:string,director:string,description:text,year:integer,length:integer,imageUrl:string,ratingsEnabled:boolean
+
+npx sequelize-cli model:generate --name User --attributes name:string,email:string,password:string,isAdmin:boolean
+
+npx sequelize-cli model:generate --name Rating --attributes rating:integer,comment:string,UserId:integer,MovieId:integer
+
+2. Seeder írása
+
+3. Példák megnézése, lásd test.js vége
