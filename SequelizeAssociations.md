@@ -292,4 +292,377 @@ const faker = require("faker");
 })();
 ```
 
+## Sok-Sok kapcsolat kiépítése
+
+Az 1-1, 1-N kapcsolatoknál elég az A-hoz kötötdő B-nek megadni egy mezőt, ami az A elsődleges kulcsára hivatkozik, a fenti példánál a Shop-hoz tartoztak Item-ek, ezért az Item-ben meg kellett adni a Shop ID-ját, ami a Shop elsődleges kulcsa.
+
+A sok-sok kapcsolat esetében azonban ez így nem elegendő adatbázis reprezentáció, mivel nem lehetne vele rendesen ábrázolni egy ilyen összetett kapcsolatot. Ezért a sok-sok kapcsolat esetében nem az egyes modellekhez veszünk fel plusz mezőket, hanem hagyjuk őket, és bevezetünk egy plusz táblát, az úgynevezett "kapcsolótáblát".
+
+A kapcsolótáblába bejegyzések kerülnek, amelyben egy bejegyzés azt reprezentálja, hogy A és B között kapcsolat van. A tábla szerkezete az alábbi módon néz ki.
+
+- Kapcsolótábla
+  - id: a bejegyzés ID-ja
+  - AId: Az "A" model ID-ja
+  - BId: A "B" model ID-ja
+  - CreatedAt: Mikor jött létre a bejegyzés a kapcsolótáblában
+  - UpdatedAt: Mikor módosult a bejegyzés a kapcsolótáblában
+
+Továbbá érdemes egy olyan megkötést is alkalmazni a táblán, hogy egy páros csak egyszer kerülhet bele, vagyis egy "AId" és "BId" páros csak egyszer szerepelhet a táblában, így a bejegyzések egyértelműek lesznek.
+
+Ez pongyolán ábrázolva valahogy így néz ki: 
+- Unique [AId, BId]
+
+Nyilván a pontos implementáció attól a keretrendszertől függ, amiben dolgozunk, ezt mindjárt látjuk picit később.
+
+Vegyük mondjuk azt a példát, hogy van egy blogunk, amiben vannak kategóriáink és bejegyzéseink. Ezek között sok-sok kapcsolat van, hiszen egy kategóriához akármennyi bejegyzés tartozhat és egy bejegyzéshez is akármennyi kategória tartozhat. Így lehetőségünk van megjeleníteni egy kategóriához az összes hozzá tartozó bejegyzést, és a bejegyzés oldalán is az összes hozzá tartozó kategóriát.
+
+Sequelize-ban ennek a megvalósítása a következőképpen néz ki.
+
+Először is ki kell generálni a Kategória és Bejegyzés modelleket az alábbi parancsokkal:
+
+```shell
+npx sequelize model:generate --name Category --attributes name:string,color:string
+npx sequelize model:generate --name Post --attributes title:string,text:string
+```
+
+Ennek a két parancsnak a hatására alapvetően két irányból történik változás:
+1. Létrejön a `models` mappában a `category.js` és a `post.js`
+2. Létrejön a `migrations` mappában a `${timestamp}-create-category.js` és a `${timestamp}-create-post.js`
+
+A sok-sok kapcsolat implementációját először a migration oldalról kezdjük, ehhez ki kell generálni a kapcsolótáblához tartozó migration-t:
+```shell
+npx sequelize migration:generate --name create-category-post
+```
+Ennek az elnevezése egyébként nincs kőbe vésve, de célszerű követni a szokásokat, és a `create-{táblanév}` modellt követni.
+
+Miután ezt a parancsot kiadtuk, a `migrations` mappában megjelenik a `${timestamp}-create-category-post.js`, aminek a tartalma valami ilyesmi lesz:
+
+```js
+"use strict";
+
+module.exports = {
+    up: async (queryInterface, Sequelize) => {
+        // Ez akkor fut le, amikor feltöltjük a migrationt (migrate)
+    },
+
+    down: async (queryInterface, Sequelize) => {
+        // Ez pedig akkor amikor visszavonjuk (undo)
+    }
+};
+```
+
+A feladat most az, hogy a fentebb már ismertetett kapcsolótábla felépítés szerint kialakítsuk a Sequelize-os eszközökkel a migrationt. Ez így fog kinézni:
+
+```js
+"use strict";
+
+module.exports = {
+    up: async (queryInterface, Sequelize) => {
+        // Tábla létrehozása
+        await queryInterface.createTable("CategoryPost", {
+            // ID mező, ugyanaz, mint bármelyik másik generált modellnél
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: Sequelize.INTEGER,
+            },
+            // Kategória ID, Bejegyzés ID
+            CategoryId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+            },
+            PostId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+            },
+            // Időbélyegek
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE,
+            },
+        });
+
+        // Megkötés a táblára, amelyben megmondjuk, hogy az említett két mező párosai egyediek
+        await queryInterface.addConstraint("CategoryPost", {
+            fields: ["CategoryId", "PostId"],
+            type: "unique",
+        });
+    },
+
+    down: async (queryInterface, Sequelize) => {
+        // Ha visszavonásra kerül a migration, egyszerűen töröljük ki a táblát
+        await queryInterface.dropTable("CategoryPost");
+    },
+};
+```
+
+Ezt követően fel kell tölteni a három létrehozott táblát az adatbázisba, vagyis meg kell hívni a migrate parancsot:
+```shell
+npx sequelize-cli db:migrate
+```
+
+Ez valami ilyesmi eredményt kell, hogy adjon sikeres migration esetén:
+```
+D:\szerveroldali\teszt>npx sequelize-cli db:migrate
+
+Sequelize CLI [Node: 14.15.1, CLI: 6.3.0, ORM: 6.9.0]
+
+Loaded configuration file "config\config.json".
+Using environment "development".
+== 20211112111029-create-category: migrating =======
+== 20211112111029-create-category: migrated (0.027s)
+
+== 20211112111041-create-post: migrating =======
+== 20211112111041-create-post: migrated (0.017s)
+
+== 20211112111100-create-category-post: migrating =======
+== 20211112111100-create-category-post: migrated (0.010s)
+```
+
+Ezen a ponton sikeresen megcsináltuk az adatbázis részt, az `sqlite` fájlunkban szerepel minden tábla. Eljött az ideje, hogy a Sequelize adatmodelljeinek a szintjén is implementáljuk a sok-sok kapcsolatot. Ehhez alapvetően két dolgot kell tenni: a `models` mappán belül a `category.js` és a `post.js`-ben lévő `association` metódusokban megadni a relációkat. Mivel sok-sok kapcsolatunk van, mindkét oldalról (mindkét fájlban) az `belongsToMany`-t fogjuk használni.
+
+Példa, hogy kell kinézzen a két fájl:
+
+`category.js`:
+
+```js
+"use strict";
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes) => {
+    class Category extends Model {
+        static associate(models) {
+            this.belongsToMany(models.Post, {
+                through: "CategoryPost",
+            });
+        }
+    }
+    Category.init(
+        {
+            name: DataTypes.STRING,
+            color: DataTypes.STRING,
+        },
+        {
+            sequelize,
+            modelName: "Category",
+        }
+    );
+    return Category;
+};
+```
+
+`post.js`:
+
+```js
+"use strict";
+const { Model } = require("sequelize");
+
+module.exports = (sequelize, DataTypes) => {
+    class Post extends Model {
+        static associate(models) {
+            this.belongsToMany(models.Category, {
+                through: "CategoryPost",
+            });
+        }
+    }
+    Post.init(
+        {
+            title: DataTypes.STRING,
+            text: DataTypes.STRING,
+        },
+        {
+            sequelize,
+            modelName: "Post",
+        }
+    );
+    return Post;
+};
+```
+
+Fontos, hogy a `belongsToMany`-nek meg kell adni második paraméterben egy objektumot, ami a beállításokat tartalmazza, és itt mindenképp értéket kell adni a `through`-nak, ez mondja meg, hogy melyik az a kapcsolótábla, amelyiken keresztül össze vannak kötve. Ezen kívül a Category a Post-hoz kötődik (tehát ott az 1. paraméter a Post), míg a Post a Category-hoz kötődik, tehát a Post-on belüli belongsToMany 1. paramétere a Category lesz.
+
+Ha eddig mindent jól csináltunk, akkor sikeresen implementáltuk a sok-sok kapcsolatot.
+
+A leírásban korábban említve volt egy függvény, amivel le lehet kérni a relációk kezelésére vonatkozó metódusokat. Ez a script így néz ki átírva Category-ra és a Post-ra:
+
+```js
+const db = require("./models");
+const { Category, Post } = db;
+
+const getModelAccessorMethods = (model) => {
+    console.log(`${model.name}:`);
+    Object.entries(model.associations).forEach(([_, associatedModel]) => {
+        Object.entries(associatedModel.accessors).forEach(([action, accessor]) => {
+            console.log(`  ${action}: ${model.name}.${accessor}(...)`);
+        });
+    });
+};
+
+;(async () => {
+    getModelAccessorMethods(Category);
+    getModelAccessorMethods(Post);
+})();
+```
+
+Ha lefuttatjuk, kiírja, hogy milyen metódusok érhetők el `Category` illetve `Post` alatt:
+
+```
+D:\szerveroldali\teszt>node accessors.js
+Category:
+  get: Category.getPosts(...)
+  set: Category.setPosts(...)
+  addMultiple: Category.addPosts(...)
+  add: Category.addPost(...)
+  create: Category.createPost(...)
+  remove: Category.removePost(...)
+  removeMultiple: Category.removePosts(...)
+  hasSingle: Category.hasPost(...)
+  hasAll: Category.hasPosts(...)
+  count: Category.countPosts(...)
+Post:
+  get: Post.getCategories(...)
+  set: Post.setCategories(...)
+  addMultiple: Post.addCategories(...)
+  add: Post.addCategory(...)
+  create: Post.createCategory(...)
+  remove: Post.removeCategory(...)
+  removeMultiple: Post.removeCategories(...)
+  hasSingle: Post.hasCategory(...)
+  hasAll: Post.hasCategories(...)
+  count: Post.countCategories(...)
+```
+
+Látszik itt is, hogy van egyes- és többes szám, és az is, hogy az Inflection pl. a Category-ból Categories-t csinált, tehát a többesszámosítás nem csak annyiból áll, hogy utána biggyeszt egy s betűt, ennél sokkal hatékonyabb.
+
+Innentől kezdve már csak az a dolgunk, hogy használjuk ezeket a metódusokat. Ehhez itt egy részletes "playground" példa script:
+
+```js
+const db = require("./models");
+const { Category, Post } = db;
+
+;(async () => {
+    // Három kategória létrehozása: c1,c2,c3
+    const c1 = await Category.create({
+        name: "category1",
+        color: "red",
+    });
+    const c2 = await Category.create({
+        name: "category2",
+        color: "white",
+    });
+    const c3 = await Category.create({
+        name: "category3",
+        color: "green",
+    });
+
+    // Két bejegyzés létrehozása: p1,p2
+    const p1 = await Post.create({
+        title: "post1",
+        text: "post1 content",
+    });
+    const p2 = await Post.create({
+        title: "post2",
+        text: "post2 content",
+    });
+
+    // Összes bejegyzés lekérése
+    //console.log(await Post.findAll());
+
+    // Egy adott bejegyzés lekérése a primary key (elsődleges kulcs) alapján, ami alapból az id
+    //console.log(await Post.findByPk(1));
+
+    // 1. kategória hozzáadása az 1. bejegyzéshez
+    await p1.addCategory(c1); // vagy await c1.addPost(p1);
+    // 1. bejegyzéshez tartozó kategóriák neveinek listázása
+    console.log((await p1.getCategories({ attributes: ["name"], raw: true })).map((entry) => entry.name));
+    // 1. bejegyzéshez tartozó kategóriák megszámolása, ez 1 lesz
+    console.log(await p1.countCategories());
+    // 1. kategória és 1. bejegyzés közötti kapcsolat megszüntetése
+    // Ez nem törli se a bejegyzést se a kategóriát, csak a kapcsolatot szünteti meg köztük,
+    // vagyis a kapcsolótáblából törli ki a bejegyzést, ami rájuk vonatkozik
+    console.log(await p1.removeCategory(c1)); // vagy await c1.removePost(p1)
+    // Ezután ha listázni akarjuk a kategóriák neveit üres tömböt kapunk
+    console.log((await p1.getCategories({ attributes: ["name"], raw: true })).map((entry) => entry.name));
+    // Adjuk hozzá a p1 bejegyzéshez a c2,c3 kategóriákat
+    await p1.addCategories([c2, c3]);
+    console.log((await p1.getCategories({ attributes: ["name"], raw: true })).map((entry) => entry.name));
+    // Az add mindig csak hozzáad, de a set beállít, tehát ha azt mondjuk, hogy
+    // a p1-hez tartozzon a c1 és a c2, nem kell a c3-at eltávolítani, csak azt mondjuk,
+    // hogy set c1,c2:
+    await p1.setCategories([c1, c2]);
+    console.log((await p1.getCategories({ attributes: ["name"], raw: true })).map((entry) => entry.name));
+    // Tudunk akár egy 4. kategóriát is csinálni közvetlenül a bejegyzésből:
+    await p1.createCategory({
+        name: "category4",
+        color: "navy",
+    });
+    // Ilyenkor a Category létrejön a Categories táblában, illetve hozzá is kapcsolódik a bejegyzéshez.
+    console.log((await p1.getCategories({ attributes: ["name"], raw: true })).map((entry) => entry.name));
+    // Ez úgy is mehet, hogy a kategória alatt hozunk létre bejegyzést:
+    const p3 = await c1.createPost({
+        title: "post3",
+        text: "post3 content",
+    });
+    // Ilyenkor a Posts táblában létrejön egy új bejegyzés, és hozzá lesz csatolva a c1 kategóriához
+    // Ha le akarjuk kérni a c1 kategóriához tartozó bejegyzések címeit, azt így tehetjük meg:
+    console.log((await c1.getPosts({ attributes: ["title"], raw: true })).map((entry) => entry.title));
+    // Ugye például most a post1 is hozzá van rendelve a c1-hez, de ha ezt ellenőrizni akarjuk,
+    // akkor arra ott a "has":
+    console.log(await c1.hasPost(p1));
+    // Ez true értéket adott, de ha mondjuk a 2. postot nézzük, az már false lesz:
+    console.log(await c1.hasPost(p2));
+    // A has is megy több posttal, pl most az 1 és a 3 van hozzárendelve a c1-hez, tehát ez truet ad:
+    console.log(await c1.hasPosts([p1, p3]));
+    // De ha bevesszük a p2-t is, akkor hiába van a p1 és a p3 hozzárendelve, mivel p2 nincs, ez false lesz:
+    console.log(await c1.hasPosts([p1, p2, p3]));
+    // Ha el akarjuk az összes bejegyzést távolítani a c1-ből, azt így tehetjük meg:
+    //console.log(await c1.removePosts(await c1.getPosts()));
+    // Nyilván ez egy tömböt vár ilyenkor, a getPosts pedig az aktuális postokat adja meg
+    // Konzolra egy kettest fog kiírni, hogy 2 postot vett le
+
+    // Azonban ha kézzel adjuk meg, mondjuk ezt:
+    console.log(await c1.removePosts([p1, p2, p3]));
+    // Akkor ez is kettőt fog logolni, de a p2-t skipeli, hiszen az nem volt hozzárendelve
+    console.log((await c1.getPosts({ attributes: ["title"], raw: true })).map((entry) => entry.title));
+
+    // Kérjük le úgy a Postokat, hogy egyúttal megjelenítsük a hozzájuk tartozó kategóriákat!
+    // A findAll, de a többi lekérő metódus tud fogadni egy options objektumot, amiben be tudjuk állítani
+    // mondjuk azt, hogy tartalmazzon-e még valamit, ahogy alább tesszük is:
+    console.log(
+        JSON.stringify(
+            await Post.findAll({
+                // A bejegyzésből csak az id, title és text mezők jelenjenek meg
+                attributes: ["id", "title", "text"],
+                // És a bejegyzés tartalmazza még...
+                include: [
+                    {
+                        // ... a kategória modelt ...
+                        model: Category,
+                        // ... mint "Categories" alias ...
+                        as: "Categories",
+                        // ... és ezeket a mezőit kérje le:
+                        attributes: ["id", "name"],
+
+                        // Ez pedig azért kell, hogy a kapcsolótáblát ne szemetelje bele,
+                        // a legjobb ha kiveszed és megnézed, mi változik
+                        through: { attributes: [] },
+                    },
+                ],
+            }),
+            // JSON.stringify testreszabása
+            null,
+            4
+        )
+    );
+})();
+```
+
+
+
+
 
