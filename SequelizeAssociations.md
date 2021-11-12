@@ -2,6 +2,20 @@
 
 Ez a leírás bemutatja, hogy néznek ki Sequelize-ban az adatmodellek közötti kapcsolatok (a Sequelize ezeket nem relációknak, hanem asszociációknak hívja), és milyen metódusokkal tudjuk ezeket létrehozni, elérni, kezelni.
 
+Tartalom:
+- [Sequelize asszociációk](#sequelize-asszociációk)
+  - [Lehetséges relációk](#lehetséges-relációk)
+  - [Relációk megadása](#relációk-megadása)
+  - [Elérhető metódusok](#elérhető-metódusok)
+  - [Metódusok használata](#metódusok-használata)
+  - [Sok-Sok kapcsolat kiépítése](#sok-sok-kapcsolat-kiépítése)
+    - [Elméleti háttér](#elméleti-háttér)
+    - [Modellek generálása, táblák beállítása](#modellek-generálása-táblák-beállítása)
+    - [Adatmodellek beállítása](#adatmodellek-beállítása)
+  - [Sok-sok kapcsolat tesztelése](#sok-sok-kapcsolat-tesztelése)
+    - [Elérhető metódusok lekérése](#elérhető-metódusok-lekérése)
+    - [Részletes példa a metódusok használatára](#részletes-példa-a-metódusok-használatára)
+
 ## Lehetséges relációk
 - 1-1 (One to One, vagyis Egy-Egy kapcsolat)
   - Egyértelmű kapcsolatot teremt két entitás között.
@@ -294,6 +308,7 @@ const faker = require("faker");
 
 ## Sok-Sok kapcsolat kiépítése
 
+### Elméleti háttér
 Az 1-1, 1-N kapcsolatoknál elég az A-hoz kötötdő B-nek megadni egy mezőt, ami az A elsődleges kulcsára hivatkozik, a fenti példánál a Shop-hoz tartoztak Item-ek, ezért az Item-ben meg kellett adni a Shop ID-ját, ami a Shop elsődleges kulcsa.
 
 A sok-sok kapcsolat esetében azonban ez így nem elegendő adatbázis reprezentáció, mivel nem lehetne vele rendesen ábrázolni egy ilyen összetett kapcsolatot. Ezért a sok-sok kapcsolat esetében nem az egyes modellekhez veszünk fel plusz mezőket, hanem hagyjuk őket, és bevezetünk egy plusz táblát, az úgynevezett "kapcsolótáblát".
@@ -315,6 +330,8 @@ Ez pongyolán ábrázolva valahogy így néz ki:
 Nyilván a pontos implementáció attól a keretrendszertől függ, amiben dolgozunk, ezt mindjárt látjuk picit később.
 
 Vegyük mondjuk azt a példát, hogy van egy blogunk, amiben vannak kategóriáink és bejegyzéseink. Ezek között sok-sok kapcsolat van, hiszen egy kategóriához akármennyi bejegyzés tartozhat és egy bejegyzéshez is akármennyi kategória tartozhat. Így lehetőségünk van megjeleníteni egy kategóriához az összes hozzá tartozó bejegyzést, és a bejegyzés oldalán is az összes hozzá tartozó kategóriát.
+
+### Modellek generálása, táblák beállítása
 
 Sequelize-ban ennek a megvalósítása a következőképpen néz ki.
 
@@ -424,6 +441,8 @@ Using environment "development".
 == 20211112111100-create-category-post: migrated (0.010s)
 ```
 
+### Adatmodellek beállítása
+
 Ezen a ponton sikeresen megcsináltuk az adatbázis részt, az `sqlite` fájlunkban szerepel minden tábla. Eljött az ideje, hogy a Sequelize adatmodelljeinek a szintjén is implementáljuk a sok-sok kapcsolatot. Ehhez alapvetően két dolgot kell tenni: a `models` mappán belül a `category.js` és a `post.js`-ben lévő `association` metódusokban megadni a relációkat. Mivel sok-sok kapcsolatunk van, mindkét oldalról (mindkét fájlban) az `belongsToMany`-t fogjuk használni.
 
 Példa, hogy kell kinézzen a két fájl:
@@ -488,6 +507,10 @@ Fontos, hogy a `belongsToMany`-nek meg kell adni második paraméterben egy obje
 
 Ha eddig mindent jól csináltunk, akkor sikeresen implementáltuk a sok-sok kapcsolatot.
 
+## Sok-sok kapcsolat tesztelése
+
+### Elérhető metódusok lekérése
+
 A leírásban korábban említve volt egy függvény, amivel le lehet kérni a relációk kezelésére vonatkozó metódusokat. Ez a script így néz ki átírva Category-ra és a Post-ra:
 
 ```js
@@ -538,6 +561,8 @@ Post:
 ```
 
 Látszik itt is, hogy van egyes- és többes szám, és az is, hogy az Inflection pl. a Category-ból Categories-t csinált, tehát a többesszámosítás nem csak annyiból áll, hogy utána biggyeszt egy s betűt, ennél sokkal hatékonyabb.
+
+### Részletes példa a metódusok használatára
 
 Innentől kezdve már csak az a dolgunk, hogy használjuk ezeket a metódusokat. Ehhez itt egy részletes "playground" példa script:
 
