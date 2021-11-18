@@ -10,11 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
     "faker": "^5.5.3",
     "sequelize": "^6.9.0",
     "sqlite3": "^5.0.2"
   },
   "devDependencies": {
+    "nodemon": "^2.0.15",
     "sequelize-cli": "^6.3.0"
   }
 }

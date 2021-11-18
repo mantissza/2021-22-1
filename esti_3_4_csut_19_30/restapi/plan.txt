@@ -47,3 +47,18 @@ Seeder generálás:
 npx sequelize-cli seed:generate --name DatabaseSeeder
 
 
+Jelszavak:
+
+hash-elés: egyirányú titkosítás
+
+password -> 0xfdkjsdfkfdsjkhdsfjk
+0xfdkjsdfkfdsjkhdsfjk -> ??? visszafelé nem megy
+
+rainbow tables - szivárványtáblák
+
+SALT-ing
+
+password + SALT -> hash 
+
+MD5 - RIP GPU gyorsítással iszonyú gyorsan törhető
+

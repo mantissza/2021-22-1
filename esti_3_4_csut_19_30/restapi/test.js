@@ -1,6 +1,6 @@
 // ilyenkor, ha csak a mappát adjuk meg, akkor az index.js-t fogja behúzni
 const models = require('./models'); 
-const { User, Genre, Movie, Rating } = models;
+const { User, Genre, Movie, Rating, sequelize } = models;
 const faker = require('faker');
 const { Op } = require("sequelize");
 
@@ -52,9 +52,20 @@ const { Op } = require("sequelize");
   //console.log(await Movie.findByPk(1)); // primary key
   //console.log(await Movie.findByPk(11111)); // null
   // Adott mezők lekérése csak
-  /*console.log(await Movie.findAll({
-    attributes: ['id', 'title']
-  }));*/
+  /*console.log(
+    (await Movie.findAll({
+      attributes: ['id', 'title']
+    })).map(movie => movie.toJSON())
+  );*/
+  // Bizonyos mezők kizárása
+  /*console.log(
+    (await Movie.findAll({
+      //attributes: ['id', 'title']
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
+    })).map(movie => movie.toJSON())
+  );*/
   // Mező lekérése más néven
   /*console.log(await Movie.findAll({
     attributes: ['id', ['title', 'cim']]
@@ -73,4 +84,44 @@ const { Op } = require("sequelize");
       id: 2,
     }
   }));*/
+
+  /*console.log(
+    (await (await Movie.findByPk(1)).getGenres({
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      },
+      joinTableAttributes: []
+    })).map(genre => genre.toJSON())
+  );*/
+
+  /*console.log(
+    JSON.stringify((await Movie.findAll({
+      attributes: {
+        include: [
+          [sequelize.fn('AVG', sequelize.col('Ratings.rating')), 'avgRating']
+        ],
+      },
+      include: [
+        {
+          model: Genre,
+          attributes: {
+            exclude: ['createdAt', 'updatedAt']
+          },
+          through: { attributes: [] }
+        },
+        {
+          model: Rating,
+          attributes: [],
+          //attributes: {
+          //  exclude: ['createdAt', 'updatedAt']
+          //},
+        }
+      ],
+      group: ['movie.id', 'Genres.id'],
+      order: sequelize.literal('avgRating DESC'),
+    })).slice(0,3), null, 4)
+  );*/
+
+  //console.log((await User.findByPk(1)).comparePassword('password'));
+
 })();
