@@ -1,5 +1,5 @@
 const models = require('./models'); // index.js
-const { User, Genre, Movie, Rating } = models;
+const { User, Genre, Movie, Rating, sequelize } = models;
 const faker = require('faker');
 const { Op } = require("sequelize");
 
@@ -68,7 +68,98 @@ const { Op } = require("sequelize");
         } 
     }));*/
 
-    await (await Movie.findByPk(1)).removeGenre(3);
-    console.log(await (await Movie.findByPk(1)).countGenres());
+    //await (await Movie.findByPk(1)).removeGenre(3);
+    //console.log(await (await Movie.findByPk(1)).countGenres());
+
+    /*const m1 = await Movie.findByPk(1);
+    console.log(
+        (await m1.getGenres({ 
+            attributes: ['id'],
+            through: { attributes: [] }
+        })).map(genre => genre.toJSON())
+    );*/
+
+    // Filmek lekérése a műfajokkal
+    /*console.log(
+        (
+            await Movie.findByPk(1, {
+                include: [{
+                    model: Genre,
+                    as: 'Genres',
+                    //attributes: ['id', 'name', 'description'], // csak ezeket szeretném
+                    attributes: { exclude: [ 'createdAt', 'updatedAt' ]}, // csak ezeket nem szeretném
+                    through: { attributes: [] },
+                }]
+            })
+        ).toJSON()
+    );*/
+
+
+    // Film lekérése, benne az értékelések átlagával
+    /*console.log(
+        (
+            await Movie.findByPk(1, {
+                // Plusz mezők a meglévők mellé
+                attributes: { 
+                    include: [
+                        [sequelize.fn('AVG', sequelize.col('Ratings.rating')), 'avgRating']
+                    ] 
+                },
+                // Kapcsolódó modellek
+                include: [
+                    {
+                        model: Genre,
+                        as: 'Genres',
+                        //attributes: ['id', 'name', 'description'], // csak ezeket szeretném
+                        attributes: { exclude: [ 'createdAt', 'updatedAt' ]}, // csak ezeket nem szeretném
+                        through: { attributes: [] },
+                    },
+                    {
+                        model: Rating,
+                        attributes: [],
+                    }
+                ]
+            })
+        ).toJSON()
+    );*/
+
+    /*console.log(
+        (
+            await Movie.findAll({
+                // Plusz mezők a meglévők mellé
+                attributes: { 
+                    include: [
+                        [sequelize.fn('AVG', sequelize.col('Ratings.rating')), 'avgRating'],
+                        // ÓÓ:PP:MP
+                        [sequelize.fn('TIME', sequelize.col('length'), "unixepoch"), 'lengthFormatted']
+                    ] 
+                },
+                // Kapcsolódó modellek
+                include: [
+                    {
+                        model: Genre,
+                        as: 'Genres',
+                        //attributes: ['id', 'name', 'description'], // csak ezeket szeretném
+                        attributes: { exclude: [ 'createdAt', 'updatedAt' ]}, // csak ezeket nem szeretném
+                        through: { attributes: [] },
+                    },
+                    {
+                        model: Rating,
+                        attributes: [],
+                    }
+                ],
+                group: ["movie.id", "Genres.id"],
+                order: sequelize.literal('avgRating DESC'),
+            })
+        ).map(movie => movie.toJSON())
+    );*/
+
+    // A megadott jelszó tartozik-e az adott felhasználóhoz
+    console.log((await User.findByPk(1)).comparePassword('password2'));
+
+    // Felhasználó JSON-be konvertálása, tipiukusan, ha valamilyen válaszban
+    // adjuk vissza a felhasználót, és ilyenkor nyilván nem lenne kedvező viselkedés,
+    // ha a jelszót is elküldenénk, még akkor sem, ha hash-elve van
+    console.log((await User.findByPk(1)).toJSON());
 
 })();
