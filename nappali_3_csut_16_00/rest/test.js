@@ -75,7 +75,7 @@ const { Op } = require("sequelize");
     console.log(
         (await m1.getGenres({ 
             attributes: ['id'],
-            through: { attributes: [] }
+            joinTableAttributes: [],
         })).map(genre => genre.toJSON())
     );*/
 
