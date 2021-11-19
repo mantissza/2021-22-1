@@ -391,6 +391,7 @@ module.exports = {
                 // Nem vehet fel NULL értéket, mindenképpen valamilyen INTEGER-nek kell lennie
                 allowNull: false,
                 // Megadjuk, hogy ez egy külső kulcs, ami a "Categories" táblán belüli "id"-re hivatkozik
+                // https://sequelize.org/master/class/lib/dialects/abstract/query-interface.js~QueryInterface.html#instance-method-createTable
                 references: {
                     model: "Categories",
                     key: "id",
