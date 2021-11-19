@@ -590,6 +590,16 @@ const db = require("./models");
 const { Category, Post } = db;
 
 ;(async () => {
+    // Korábbi kategóriák, bejegyzések törlése
+    // Ez ilyen SQL kéréseket fog kiadni:
+    //      Executing (default): DELETE FROM `Categories`; DELETE FROM `sqlite_sequence` WHERE `name` = 'Categories';
+    //      Executing (default): DELETE FROM `Posts`; DELETE FROM `sqlite_sequence` WHERE `name` = 'Posts';
+    // A kapcsolótábla adatai a CASCADE miatt fognak törlődni
+    // A "restartIdentity" elméletileg azt jelentené, hogy az ID ismét 1-ről induljon (az sqlite_sequence-ből törli a táblát),
+    // de ez nem működik alapból SQLite-al: https://github.com/sequelize/sequelize/issues/11152
+    await Category.destroy({ truncate: true, restartIdentity: true });
+    await Post.destroy({ truncate: true, restartIdentity: true });
+
     // Három kategória létrehozása: c1,c2,c3
     const c1 = await Category.create({
         name: "category1",
@@ -676,7 +686,25 @@ const { Category, Post } = db;
 
     // Kérjük le úgy a Postokat, hogy egyúttal megjelenítsük a hozzájuk tartozó kategóriákat!
     // A findAll, de a többi lekérő metódus tud fogadni egy options objektumot, amiben be tudjuk állítani
-    // mondjuk azt, hogy tartalmazzon-e még valamit, ahogy alább tesszük is:
+    // mondjuk azt, hogy tartalmazzon-e még valamit, ahogy alább tesszük is.
+
+    console.log(
+        JSON.stringify(
+            await Post.findAll({
+                include: [
+                    {
+                        model: Category,
+                        // "as" tulajdonképpen nem kell, ha a models-ben nem adtunk meg alias-t
+                    },
+                ],
+            }),
+            // JSON.stringify testreszabása
+            null,
+            4
+        )
+    );
+
+    // Ugyanez, picit jobban testreszabva:
     console.log(
         JSON.stringify(
             await Post.findAll({
@@ -693,8 +721,35 @@ const { Category, Post } = db;
                         attributes: ["id", "name"],
 
                         // Ez pedig azért kell, hogy a kapcsolótáblát ne szemetelje bele,
-                        // a legjobb ha kiveszed és megnézed, mi változik
+                        // a legjobb ha kikommentezed az alábbi sort és megnézed, mi változik
                         through: { attributes: [] },
+                    },
+                ],
+            }),
+            // JSON.stringify testreszabása
+            null,
+            4
+        )
+    );
+
+    //await p2.addCategory(c1); // Alapból csak az 1-es bejegyzéshez tartozik, de itt megnézhetjük, mi történik, ha a 2-eshez is rendelünk kategóriát
+
+    // Csak azon bejegyzések lekérése, amelyekhez tartozik legalább egy kategória
+    console.log(
+        JSON.stringify(
+            await Post.findAll({
+                // A bejegyzés minden mezőjét lekérjük, kivéve a timestamp-eket
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
+                include: [
+                    {
+                        model: Category,
+                        // Megköveteljük, hogy a szülőhöz tartozzon a gyerek (Post-hoz a Category, hiszen a Post-ra hívtuk a findAll-t)
+                        required: true,
+                        // Továbbá megmondjuk, hogy a gyerekből (Category) semmilyen mezőt nem akarunk látni, csak a bejegyzésre vagyunk kíváncsiak
+                        attributes: [],
+                        //through: { attributes: [] },
                     },
                 ],
             }),
@@ -705,8 +760,3 @@ const { Category, Post } = db;
     );
 })();
 ```
-
-
-
-
-
