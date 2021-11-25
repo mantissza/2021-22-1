@@ -1,7 +1,6 @@
 const express = require("express");
+require("express-async-errors");
 const app = express();
-const models = require("./models");
-const { User, Genre, Movie, Rating, sequelize } = models;
 
 /*app.use(function (req, res, next) {
     console.log("Sajat middleware");
@@ -11,38 +10,20 @@ const { User, Genre, Movie, Rating, sequelize } = models;
 
 app.use(express.json());
 
-// Lekérések: összes, egy
+app.use("/genres", require("./routers/genre"));
+app.use("/movies", require("./routers/movie"));
+app.use("/auth", require("./routers/auth"));
 
-app.get("/genres", async function (req, res) {
-    const genres = await Genre.findAll();
-    res.send(genres);
-});
-
-app.get("/genres/:id", async function (req, res) {
-    //console.log(req.params);
-    //const id = req.params.id;
-    const { id } = req.params;
-    if (isNaN(parseInt(id))) {
-        // NaN - isNaN
-        return res.sendStatus(400); // Bad request
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
     }
-    const genre = await Genre.findByPk(id);
-    if (genre === null) {
-        return res.sendStatus(404); // HTTP Status Code, Not found
-    }
-    res.send(genre);
+    res.status(500).send({
+        name: err.name,
+        message: err.message,
+        stack: err.stack.split(/$\s+/gm),
+    });
 });
-
-// Módosítások: hozzáadás, módosítás, törlés (összes/egy)
-
-app.post("/genres", async function (req, res) {
-    console.log(req.body);
-    //console.log(req.valami);
-    const genre = await Genre.create(req.body);
-    res.send(genre);
-});
-
-// TODO: befejezni, hibakezelés, validálás, kód strukturálása
 
 app.listen(3000, () => {
     console.log("Az Express fut");

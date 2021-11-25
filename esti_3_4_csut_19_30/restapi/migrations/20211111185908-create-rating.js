@@ -10,15 +10,18 @@ module.exports = {
             },
             rating: {
                 type: Sequelize.INTEGER,
+                allowNull: false,
             },
             comment: {
                 type: Sequelize.STRING,
             },
             UserId: {
                 type: Sequelize.INTEGER,
+                allowNull: false,
             },
             MovieId: {
                 type: Sequelize.INTEGER,
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,

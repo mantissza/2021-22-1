@@ -10,6 +10,9 @@ module.exports = {
             },
             name: {
                 type: Sequelize.STRING,
+                allowNull: false,
+                // Egyazon névvel nem szerepelhet két műfaj a táblában
+                unique: true,
             },
             description: {
                 type: Sequelize.STRING,

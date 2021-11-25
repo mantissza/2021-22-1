@@ -35,7 +35,7 @@ module.exports = {
                     //email: faker.internet.email(),
                     email: `user${i}@szerveroldali.hu`,
                     password: "password",
-                    isAdmin: false,
+                    //isAdmin: false,
                 })
             );
         }
