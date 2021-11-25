@@ -2,10 +2,6 @@
 const { Model } = require("sequelize");
 const bcrypt = require("bcrypt");
 
-const hashPassword = (user) => {
-    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(12));
-};
-
 module.exports = (sequelize, DataTypes) => {
     class User extends Model {
         /**
@@ -32,8 +28,18 @@ module.exports = (sequelize, DataTypes) => {
     User.init(
         {
             name: DataTypes.STRING,
-            email: DataTypes.STRING,
-            password: DataTypes.STRING,
+            email: {
+                type: DataTypes.STRING,
+                validate: {
+                    isEmail: true,
+                },
+            },
+            password: {
+                type: DataTypes.STRING,
+                validate: {
+                    len: [4, 128],
+                },
+            },
             isAdmin: DataTypes.BOOLEAN,
         },
         {
@@ -44,7 +50,9 @@ module.exports = (sequelize, DataTypes) => {
                 attributes: { exclude: ['password'] },
             },*/
             hooks: {
-                beforeCreate: hashPassword,
+                beforeCreate: (user) => {
+                    user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(12));
+                },
             },
         }
     );

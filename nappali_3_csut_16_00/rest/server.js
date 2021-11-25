@@ -1,7 +1,6 @@
 const express = require("express");
+require("express-async-errors");
 const app = express();
-const models = require("./models"); // index.js
-const { User, Genre, Movie, Rating, sequelize } = models;
 
 // Minden alatta lévő végpontban a req-ben elérhető lesz a .asd, aminek az értéke 1 lesz
 /*app.use(function (req, res, next) {
@@ -11,35 +10,22 @@ const { User, Genre, Movie, Rating, sequelize } = models;
 
 app.use(express.json());
 
-// lekérések
-app.get("/genres", async function (req, res) {
-    const genres = await Genre.findAll();
-    res.send(genres);
-});
+app.use("/genres", require("./routers/genre"));
+app.use("/movies", require("./routers/movie"));
+app.use("/auth", require("./routers/auth"));
 
-app.get("/genres/:id", async function (req, res) {
-    //console.log(req.params);
-    const { id } = req.params;
-    if (isNaN(parseInt(id))) {
-        return res.sendStatus(400); // Bad request - rossz kérés
+app.use((err, req, res, next) => {
+    // Már el lett-e küldve valamilyen response.send()?
+    if (res.headersSent) {
+        return next(err);
     }
-    const genre = await Genre.findByPk(id);
-    if (genre === null) {
-        return res.sendStatus(404); // Not found - nem található
-    }
-    res.send(genre);
+    // Általános hibakezelés, ha még nem lett válasz küldve, akkor itt küldünk
+    res.status(500).send({
+        name: err.name,
+        message: err.message,
+        stack: err.stack.split(/$\s+/gm),
+    });
 });
-
-// létrehozás, módosítás, törlés
-
-app.post("/genres", async function (req, res) {
-    console.log(req.body);
-    //console.log(req.asd);
-    const genre = await Genre.create(req.body);
-    res.send(genre);
-});
-
-// TODO: async hibakezelés, validálás, Genre CRUD után strukturálás
 
 app.listen(3000, () => {
     console.log("Az Express fut");

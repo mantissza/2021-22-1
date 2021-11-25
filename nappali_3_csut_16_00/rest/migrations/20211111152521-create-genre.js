@@ -10,6 +10,10 @@ module.exports = {
             },
             name: {
                 type: Sequelize.STRING,
+                // A név nem lehet null érték (mindenképp legyen név)
+                allowNull: false,
+                // Egy név csak egyszer lehet a műfaj táblában
+                unique: true,
             },
             description: {
                 type: Sequelize.STRING,
