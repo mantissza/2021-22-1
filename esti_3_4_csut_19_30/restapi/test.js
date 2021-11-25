@@ -1,12 +1,12 @@
 // ilyenkor, ha csak a mappát adjuk meg, akkor az index.js-t fogja behúzni
-const models = require('./models'); 
+const models = require("./models");
 const { User, Genre, Movie, Rating, sequelize } = models;
-const faker = require('faker');
+const faker = require("faker");
 const { Op } = require("sequelize");
 
 // Self-invoke function
-;(async () => {
-  /*const genresCount = faker.datatype.number({ min: 5, max: 10 });
+(async () => {
+    /*const genresCount = faker.datatype.number({ min: 5, max: 10 });
   const genres = [];
   for (let i = 1; i < genresCount; i++) {
     genres.push(
@@ -43,22 +43,21 @@ const { Op } = require("sequelize");
   
   await movie.setGenres(genres);
   console.log(await movie.countGenres());*/
-
-  // Összes film lekérése
-  //console.log(await Movie.findAll());
-  // Filmek megszámolása
-  //console.log(await Movie.count());
-  // Egy adott film lekérése
-  //console.log(await Movie.findByPk(1)); // primary key
-  //console.log(await Movie.findByPk(11111)); // null
-  // Adott mezők lekérése csak
-  /*console.log(
+    // Összes film lekérése
+    //console.log(await Movie.findAll());
+    // Filmek megszámolása
+    //console.log(await Movie.count());
+    // Egy adott film lekérése
+    //console.log(await Movie.findByPk(1)); // primary key
+    //console.log(await Movie.findByPk(11111)); // null
+    // Adott mezők lekérése csak
+    /*console.log(
     (await Movie.findAll({
       attributes: ['id', 'title']
     })).map(movie => movie.toJSON())
   );*/
-  // Bizonyos mezők kizárása
-  /*console.log(
+    // Bizonyos mezők kizárása
+    /*console.log(
     (await Movie.findAll({
       //attributes: ['id', 'title']
       attributes: {
@@ -66,26 +65,25 @@ const { Op } = require("sequelize");
       }
     })).map(movie => movie.toJSON())
   );*/
-  // Mező lekérése más néven
-  /*console.log(await Movie.findAll({
+    // Mező lekérése más néven
+    /*console.log(await Movie.findAll({
     attributes: ['id', ['title', 'cim']]
   }));*/
-  // Olyan filmek, amik 1950 után készültek
-  /*console.log(await Movie.findAll({
+    // Olyan filmek, amik 1950 után készültek
+    /*console.log(await Movie.findAll({
     where: {
       year: {
         [Op.gt]: 1950,
       }
     }
   }));*/
-  // Egy valamilyen rekord megkeresése valamilyen feltétel alapján
-  /*console.log(await Movie.findOne({
+    // Egy valamilyen rekord megkeresése valamilyen feltétel alapján
+    /*console.log(await Movie.findOne({
     where: {
       id: 2,
     }
   }));*/
-
-  /*console.log(
+    /*console.log(
     (await (await Movie.findByPk(1)).getGenres({
       attributes: {
         exclude: ['createdAt', 'updatedAt']
@@ -93,8 +91,7 @@ const { Op } = require("sequelize");
       joinTableAttributes: []
     })).map(genre => genre.toJSON())
   );*/
-
-  /*console.log(
+    /*console.log(
     JSON.stringify((await Movie.findAll({
       attributes: {
         include: [
@@ -121,7 +118,5 @@ const { Op } = require("sequelize");
       order: sequelize.literal('avgRating DESC'),
     })).slice(0,3), null, 4)
   );*/
-
-  //console.log((await User.findByPk(1)).comparePassword('password'));
-
+    //console.log((await User.findByPk(1)).comparePassword('password'));
 })();

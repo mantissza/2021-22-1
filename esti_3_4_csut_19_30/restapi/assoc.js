@@ -1,4 +1,4 @@
-const models = require('./models'); 
+const models = require("./models");
 const { User, Genre, Movie, Rating } = models;
 
 const getModelAccessorMethods = (model) => {
@@ -10,7 +10,7 @@ const getModelAccessorMethods = (model) => {
     });
 };
 
-;(async () => {
+(async () => {
     getModelAccessorMethods(User);
     getModelAccessorMethods(Movie);
     getModelAccessorMethods(Rating);
