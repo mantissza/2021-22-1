@@ -1,10 +1,10 @@
-const models = require('./models'); // index.js
+const models = require("./models"); // index.js
 const { User, Genre, Movie, Rating, sequelize } = models;
-const faker = require('faker');
+const faker = require("faker");
 const { Op } = require("sequelize");
 
 // Self-Invoke Function
-;(async () => {
+(async () => {
     /*const user = await User.create({
         name: faker.name.findName(),
         email: faker.internet.email(),
@@ -94,7 +94,6 @@ const { Op } = require("sequelize");
         ).toJSON()
     );*/
 
-
     // Film lekérése, benne az értékelések átlagával
     /*console.log(
         (
@@ -155,11 +154,10 @@ const { Op } = require("sequelize");
     );*/
 
     // A megadott jelszó tartozik-e az adott felhasználóhoz
-    console.log((await User.findByPk(1)).comparePassword('password2'));
+    console.log((await User.findByPk(1)).comparePassword("password2"));
 
     // Felhasználó JSON-be konvertálása, tipiukusan, ha valamilyen válaszban
     // adjuk vissza a felhasználót, és ilyenkor nyilván nem lenne kedvező viselkedés,
     // ha a jelszót is elküldenénk, még akkor sem, ha hash-elve van
     console.log((await User.findByPk(1)).toJSON());
-
 })();
