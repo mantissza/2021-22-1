@@ -1,0 +1,10 @@
+npx sequelize model:generate --name Genre --attributes name:string
+
+npx sequelize model:generate --name Developer --attributes name:string,website:string,location:string
+
+npx sequelize model:generate --name Game --attributes title:string,writers:string,description:string,singleplayer:boolean,multiplayer:boolean,engine:string,DeveloperId:integer
+
+npx sequelize model:generate --name Release --attributes platform:enum:{win,ps2,ps3,ps4,ps5,xbox360,xboxone},date:date,version:string,GameId:integer
+
+npx sequelize migration:generate --name create-genre-game
+
