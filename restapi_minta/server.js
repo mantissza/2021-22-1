@@ -18,6 +18,8 @@ const exampleRouter = require("./routers/example");
 
 // Routerek bind-olása adott végpontokhoz
 app.use("/example", exampleRouter);
+app.use("/games", require("./routers/games"));
+app.use("/genres", require("./routers/genres"));
 // Ide vedd fel a további routereket/végpontokat:
 // ...
 
