@@ -103,19 +103,19 @@ Készíts egy REST API-t Node.js-ben, Express, Sequelize és SQLite3 segítség�
 - Storage
     - name: string, unique (tehát egyedi, vagyis ugyanaz a név nem szerepelhet kétszer)
     - capacity: number
-  - Appliance
-    - name: string
-  - Ingredient
-    - name: string
-    - amount: number
-    - **S**torageId (összekapcsolásból jön) 
-      - **NAGYON FONTOS**, hogy Pascal case-ben legyen, tehát kezdődjön nagybetűvel!
-  - Recipe
-    - name: string, unique (tehát egyedi, vagyis ugyanaz a név nem szerepelhet egyszerre több beszállítónál)
-    - isVegetarian: boolean
-    - doneCount: number _(vagyis hányszor készítették már el)_
-    - **A**pplianceId (összekapcsolásból jön) 
-      - **NAGYON FONTOS**, hogy Pascal case-ben legyen, tehát kezdődjön nagybetűvel!
+- Appliance
+  - name: string
+- Ingredient
+  - name: string
+  - amount: number
+  - **S**torageId (összekapcsolásból jön) 
+    - **NAGYON FONTOS**, hogy Pascal case-ben legyen, tehát kezdődjön nagybetűvel!
+- Recipe
+  - name: string, unique (tehát egyedi, vagyis ugyanaz a név nem szerepelhet egyszerre több beszállítónál)
+  - isVegetarian: boolean
+  - doneCount: number _(vagyis hányszor készítették már el)_
+  - **A**pplianceId (összekapcsolásból jön) 
+    - **NAGYON FONTOS**, hogy Pascal case-ben legyen, tehát kezdődjön nagybetűvel!
 
 ### Feladatok
 
