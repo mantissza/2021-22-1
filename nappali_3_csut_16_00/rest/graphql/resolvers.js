@@ -88,4 +88,56 @@ module.exports = {
     User: {
         ratings: (user) => user.getRatings(),
     },
+    Mutation: {
+        rate: auth(async (_, { movieId, rating, comment }, context) => {
+            const movie = await Movie.findByPk(movieId);
+            if (movie === null) throw new Error("A megadott film nem létezik");
+            if (!movie.ratingsEnabled) throw new Error("A megadott filmhez nincsenek engedélyezve az értékelések!");
+            // A felhasználó értékelte-e már a filmet?
+            let ratingDb = await Rating.findOne({
+                where: {
+                    MovieId: movieId,
+                    UserId: context.user.id,
+                },
+            });
+            // Ha ezekkel a feltételekkel találtunk értékelést (nem null), akkor a felhasználó már értékelte az adott filmet
+            if (ratingDb !== null) {
+                await ratingDb.update({
+                    rating,
+                    comment,
+                });
+                return {
+                    newRating: false,
+                    rating: ratingDb,
+                };
+            } else {
+                ratingDb = await Rating.create({
+                    rating,
+                    comment,
+                    MovieId: movieId,
+                    UserId: context.user.id,
+                });
+                return {
+                    newRating: true,
+                    rating: ratingDb,
+                };
+            }
+        }),
+        deleteRating: auth(async (_, { movieId }, context) => {
+            const movie = await Movie.findByPk(movieId);
+            if (movie === null) throw new Error("A megadott film nem létezik");
+            if (!movie.ratingsEnabled) throw new Error("A megadott filmhez nincsenek engedélyezve az értékelések!");
+            // A felhasználó értékelte-e már a filmet?
+            let ratingDb = await Rating.findOne({
+                where: {
+                    MovieId: movieId,
+                    UserId: context.user.id,
+                },
+            });
+            // Ha ezekkel a feltételekkel találtunk értékelést (nem null), akkor a felhasználó már értékelte az adott filmet
+            if (!ratingDb) return false;
+            await ratingDb.destroy();
+            return true;
+        }),
+    },
 };

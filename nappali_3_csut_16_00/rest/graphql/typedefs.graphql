@@ -15,6 +15,18 @@ type Query {
     top(limit: Int!): [Movie]!
 }
 
+type Mutation {
+    rate(movieId: ID!, rating: Int!, comment: String): RatingResponse!
+    deleteRating(movieId: ID!): Boolean!
+}
+
+type RatingResponse {
+    # Új értékelést adtunk-e hozzá
+    newRating: Boolean!
+    # Aktualizált rating visszaadása
+    rating: Rating!
+}
+
 type User {
     id: ID!
     name: String!
