@@ -10,7 +10,23 @@ module.exports = {
         statistics: async (_, { shopId }) => {
             const s = await Shop.findByPk(shopId);
             if (!s) throw new Error("Shop not found");
-            const count = await s.countItems();
+            const items = await s.getItems();
+            let count = 0, max = 0, min = Number.MAX_SAFE_INTEGER, sum = 0, oddSum = 0.0; // prettier-ignore
+            for (const item of items) {
+                sum += item.price;
+                if (min > item.price) min = item.price;
+                if (max < item.price) max = item.price;
+                if (item.price % 2 !== 0) oddSum += item.price;
+                count++;
+            }
+            return {
+                count,
+                max,
+                min,
+                average: sum / count,
+                oddSumTenPercent: oddSum * 0.1,
+            };
+            /*const count = await s.countItems();
             const max = (await s.getItems({ order: [["price", "DESC"]] }))[0]?.price;
             const min = (await s.getItems({ order: [["price", "ASC"]] }))[0]?.price;
             const average = (
@@ -31,7 +47,7 @@ module.exports = {
                 min,
                 average,
                 oddSumTenPercent,
-            };
+            };*/
         },
     },
     Mutation: {
