@@ -1,3 +1,79 @@
 type Query {
-    helloAuth: String
+    warehouses: [Warehouse]
+    shop(id: ID!): Shop
+    cheapestItem: Item
+    statistics(shopId: ID!): StatsResult!
+}
+
+type Mutation {
+    updateWarehouse(data: WarehouseInput!): Warehouse
+    refillShelves(id: ID!, items: [ItemInput]): Shop
+    fireCarriers(warehouseId: ID!): FireCarriersResult!
+}
+
+type StatsResult {
+    count: Int!
+    max: Int!
+    min: Int!
+    average: Float!
+    oddSumTenPercent: Float!
+}
+
+type FireCarriersResult {
+    fired: [Carrier]
+    remainders: [Carrier]
+}
+
+input WarehouseInput {
+    id: ID!
+    name: String
+    city: String
+    capacity: Int
+}
+
+input ItemInput {
+    name: String!
+    price: Int!
+}
+
+type Shop {
+    id: ID!
+    name: String!
+    city: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    # Custom mezők
+    warehousesStartingWithVowel: [Warehouse]
+    warehouses: [Warehouse]
+    items: [Item]
+}
+
+type Item {
+    id: ID!
+    name: String!
+    price: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    # Relációk
+    shop: Shop
+}
+
+type Warehouse {
+    id: ID!
+    name: String!
+    city: String!
+    capacity: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    # Relációk
+    carriers: [Carrier]
+}
+
+type Carrier {
+    id: ID!
+    name: String!
+    numberOfCars: Int!
+    carCapacity: Int!
+    createdAt: DateTime!
+    updatedAt: DateTime!
 }
